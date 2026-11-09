@@ -1,0 +1,17 @@
+{
+  "id": "mtg-solo-sax",
+  "name": "MTG Solo Saxophones",
+  "version": "1.0.0",
+  "category": "Woodwinds",
+  "description": "Soprano, alto, tenor and baritone saxophones played note by note.",
+  "author": "Music Technology Group, Universitat Pompeu Fabra (SFZ by sfzinstruments)",
+  "license": "CC BY 4.0",
+  "homepage": "https://github.com/sfzinstruments/MTG.SoloSax",
+  "source": "https://github.com/sfzinstruments/MTG.SoloSax/archive/b494d256549b3d088fdec176ce82867f8a1f58b2.zip",
+  "sounds": [
+    { "name": "Soprano Sax", "file": "MTG Solo Saxophones/MTG Soprano Sax.sfz" },
+    { "name": "Alto Sax", "file": "MTG Solo Saxophones/MTG Alto Sax.sfz" },
+    { "name": "Tenor Sax", "file": "MTG Solo Saxophones/MTG Tenor Sax.sfz" },
+    { "name": "Baritone Sax", "file": "MTG Solo Saxophones/MTG Baritone Sax.sfz" }
+  ]
+}

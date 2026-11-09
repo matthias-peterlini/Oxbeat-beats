@@ -1,0 +1,23 @@
+{
+  "id": "cowsynth",
+  "name": "Cowsynth",
+  "version": "1.0.0",
+  "category": "Synths",
+  "description": "Quirky sample-based synth organs, pads and plucks.",
+  "author": "Karoryfer Samples",
+  "license": "CC0 1.0",
+  "homepage": "https://github.com/sfzinstruments/karoryfer.cowsynth",
+  "source": "https://github.com/sfzinstruments/karoryfer.cowsynth/archive/5a5b5afc2dabbe54cf9d75ab64711ce01862b42c.zip",
+  "sounds": [
+    { "name": "Fancy Organ", "file": "cowsynth_fancy_organ.sfz" },
+    { "name": "Fancy Pad", "file": "cowsynth_fancy_pad.sfz" },
+    { "name": "Fancy Pluck", "file": "cowsynth_fancy_pluck.sfz" },
+    { "name": "Lonely Organ", "file": "cowsynth_lonely_organ.sfz" },
+    { "name": "Lonely Pad", "file": "cowsynth_lonely_pad.sfz" },
+    { "name": "Lonely Pluck", "file": "cowsynth_lonely_pluck.sfz" },
+    { "name": "Wheezy Organ", "file": "cowsynth_wheezy_organ.sfz" },
+    { "name": "Wheezy Pad", "file": "cowsynth_wheezy_pad.sfz" },
+    { "name": "Wheezy Pluck", "file": "cowsynth_wheezy_pluck.sfz" },
+    { "name": "Baggy", "file": "cowsynth_baggy.sfz" }
+  ]
+}

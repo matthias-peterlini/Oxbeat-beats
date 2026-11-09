@@ -1,0 +1,12 @@
+Oxbeat-Sounds licensing
+=======================
+
+The build scripts, recipes and workflow files in this repository are
+dedicated to the public domain under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The sounds themselves are NOT covered by this file. Each pack is built from
+an upstream sample library and keeps that library's own licence, which is
+named in its recipe (packs/<id>.json), in the pack's pack.json, and in the
+table in README.md. Where the upstream library ships a licence file, the
+pack includes it.

@@ -1,0 +1,43 @@
+name: Publish packs
+
+on:
+  push:
+    branches: [main]
+    paths: ["packs/**", "tools/**", ".github/workflows/publish.yml"]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Rebuild every pack, even unchanged ones"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-packs
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build changed packs
+        run: node tools/build.mjs ${{ inputs.force && '--force' || '' }}
+
+      - name: Upload to the "packs" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          gh release view packs >/dev/null 2>&1 || gh release create packs \
+            --title "Sound packs" \
+            --notes "Downloadable sound packs for Oxbeat. Open Oxbeat, choose Add Track and the Store tab to install them." \
+            --latest=false
+          gh release upload packs dist/*.zip dist/index.json --clobber

@@ -1,0 +1,14 @@
+{
+  "id": "sams-sonor-drums",
+  "name": "Sam's Sonor Drums",
+  "version": "1.0.0",
+  "category": "Drums",
+  "description": "A real Sonor Force 3001 kit, recorded with several velocity layers.",
+  "author": "Sam Greene (SFZ by sfzinstruments)",
+  "license": "CC BY-SA 4.0",
+  "homepage": "https://github.com/sfzinstruments/SamsSonor",
+  "source": "https://github.com/sfzinstruments/SamsSonor/archive/ef3e32058924ed1c3335e86d03094d3f310a9104.zip",
+  "sounds": [
+    { "name": "Sonor Kit", "file": "SamsSonor.sfz", "kind": "drums", "caption": "Natural acoustic drums" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "ixox-flute",
+  "name": "Ixox Flute",
+  "version": "1.0.0",
+  "category": "Woodwinds",
+  "description": "A soft, breathy concert flute.",
+  "author": "Xavier Hosxe (SFZ by sfzinstruments)",
+  "license": "CC BY 4.0",
+  "homepage": "https://github.com/sfzinstruments/Ixox.Flute",
+  "source": "https://github.com/sfzinstruments/Ixox.Flute/archive/0cc54468bb0d2d9b32921958585caad65ba8df21.zip",
+  "sounds": [
+    { "name": "Flute", "file": "Ixox Flute.sfz", "caption": "Soft and breathy" }
+  ]
+}
