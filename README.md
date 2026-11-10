@@ -4,7 +4,7 @@
 
 **Free instruments and drum kits for [Oxbeat](https://github.com/matthias-peterlini/Oxbeat), one click away.**
 
-[![Publish packs](https://github.com/matthias-peterlini/Oxbeat-Sounds/actions/workflows/publish.yml/badge.svg)](https://github.com/matthias-peterlini/Oxbeat-Sounds/actions/workflows/publish.yml)
+[![Publish packs](https://github.com/matthias-peterlini/Oxbeat-beats/actions/workflows/publish.yml/badge.svg)](https://github.com/matthias-peterlini/Oxbeat-beats/actions/workflows/publish.yml)
 ![Packs](https://img.shields.io/badge/packs-5-6c5ce7)
 ![Sounds](https://img.shields.io/badge/sounds-74-00b894)
 
@@ -56,7 +56,7 @@ publish.yml          on every push to main, builds the packs whose version chang
 ```
 
 Oxbeat reads `index.json` from the
-[`packs` release](https://github.com/matthias-peterlini/Oxbeat-Sounds/releases/tag/packs),
+[`packs` release](https://github.com/matthias-peterlini/Oxbeat-beats/releases/tag/packs),
 downloads the zip over HTTPS, checks its SHA-256, and unpacks it.
 
 ### Recipe format
