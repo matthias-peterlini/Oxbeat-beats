@@ -5,7 +5,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { MB, fetchRepo, flacBinary, flacEncoder, folderSize, readWav } from "./lib.mjs";
+import { CREDIT_PATTERNS, MB, fetchRepo, flacBinary, flacEncoder, folderSize, readWav, upstreamCredits } from "./lib.mjs";
 import { playableRegions, writeFlatSfz } from "./sfz.mjs";
 
 const escape = (p) => p.replace(/([\\*?[\]!# ])/g, "\\$1");
@@ -25,19 +25,36 @@ function smplLoop(file) {
   return null;
 }
 
+// SFZ programs name samples in any casing, which only works on a
+// case-insensitive filesystem. Point each region's sample at the path as the
+// repository spells it (`tree`: `git ls-tree` names) and return those paths.
+export function resolveSamples(regions, dir, tree, key) {
+  const actual = new Map(tree.map((f) => [f.toLowerCase(), f]));
+  const rels = new Set();
+  for (const r of regions) {
+    const rel = path.relative(dir, r.sample).replace(/\\/g, "/");
+    const real = actual.get(rel.toLowerCase());
+    if (!real) throw new Error(`${key}: ${rel} is not in the repository`);
+    r.sample = path.join(dir, real);
+    rels.add(real);
+  }
+  return rels;
+}
+
 // repos: { key: { url, sha, license, extra?: [patterns] } }
 // programs: [{ name, repo, file, defines?, defaultPath?, keep? }]
 export function buildSfzPack({ repos, programs, pack, work, run }) {
   const flac = flacBinary();
   run(flac, ["--version"]);
   const encode = flacEncoder(flac, run, work);
-  const base = ["*.sfz", "/LICENSE", "/license", "/LICENSE.md", "/README.md", "/readme.txt", "/Readme.txt"];
+  const base = ["*.sfz", ...CREDIT_PATTERNS];
   const dirs = {};
   const parsed = [];
   for (const [key, spec] of Object.entries(repos)) dirs[key] = fetchRepo({ ...spec, patterns: base }, work, run);
 
-  // Pass 1: parse, then check out exactly the samples each repo needs.
-  const needed = Object.fromEntries(Object.keys(repos).map((k) => [k, new Set()]));
+  // Pass 1: parse, resolve every sample to the repository's own casing (pass 2
+  // and the output SFZ use that path), then check out exactly those samples.
+  const needed = Object.fromEntries(Object.keys(repos).map((k) => [k, []]));
   for (const p of programs) {
     const dir = dirs[p.repo];
     const { regions, dropped, unused } = playableRegions(path.join(dir, p.file), p);
@@ -45,20 +62,14 @@ export function buildSfzPack({ repos, programs, pack, work, run }) {
     parsed.push({ p, regions });
     console.log(`sfzpack: ${p.name}: ${regions.length} regions, dropped ${JSON.stringify(dropped)}`);
     if (unused.length) console.log(`sfzpack:   ignored opcodes: ${unused.join(" ")}`);
-    for (const r of regions) needed[p.repo].add(r.sample);
+    needed[p.repo].push(...regions);
   }
   for (const [key, spec] of Object.entries(repos)) {
     const dir = dirs[key];
-    const actual = new Map(run("git", ["-C", dir, "ls-tree", "-r", "--name-only", spec.sha], { stdio: "pipe", encoding: "utf8", maxBuffer: 64 * MB })
-      .split("\n").filter(Boolean).map((f) => [f.toLowerCase(), f]));
-    const patterns = [...base, ...(spec.extra ?? [])];
-    for (const s of needed[key]) {
-      const rel = path.relative(dir, s).replace(/\\/g, "/");
-      const real = actual.get(rel.toLowerCase());
-      if (!real) throw new Error(`${key}: ${rel} is not in the repository`);
-      patterns.push(`/${escape(real)}`);
-    }
-    fetchRepo({ ...spec, patterns }, work, run);
+    const tree = run("git", ["-C", dir, "ls-tree", "-r", "--name-only", spec.sha], { stdio: "pipe", encoding: "utf8", maxBuffer: 64 * MB })
+      .split("\n").filter(Boolean);
+    const rels = resolveSamples(needed[key], dir, tree, key);
+    fetchRepo({ ...spec, patterns: [...base, ...(spec.extra ?? []), ...[...rels].map((s) => `/${escape(s)}`)] }, work, run);
   }
 
   // Pass 2: encode each sample once and write the flat programs.
@@ -100,13 +111,8 @@ export function buildSfzPack({ repos, programs, pack, work, run }) {
   return dirs;
 }
 
-// Each repo's licence and readme, as copyCredits [from, to] pairs.
+// Each repo's licences and readmes, as copyCredits [from, to] pairs. Throws
+// when a repo has no licence file.
 export function creditFiles(dirs) {
-  const files = [];
-  for (const [key, dir] of Object.entries(dirs)) {
-    for (const f of ["LICENSE", "license", "LICENSE.md", "README.md", "readme.txt", "Readme.txt"]) {
-      if (fs.readdirSync(dir).includes(f)) files.push([path.join(dir, f), `${key}-${f}${f.includes(".") ? "" : ".txt"}`]);
-    }
-  }
-  return files;
+  return Object.entries(dirs).flatMap(([key, dir]) => upstreamCredits(dir, key));
 }

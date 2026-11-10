@@ -364,6 +364,39 @@ export function flacEncoder(flac, run, work) {
   };
 }
 
+// Sparse-checkout patterns for a repository's top-level licence and readme
+// files in any casing (LICENSE, Licence.md, COPYING.txt, readme.txt...).
+export const CREDIT_PATTERNS = ["/[Ll][Ii][Cc][Ee][Nn][CcSs][Ee]*", "/[Cc][Oo][Pp][Yy][Ii][Nn][Gg]*", "/[Rr][Ee][Aa][Dd][Mm][Ee]*"];
+
+const creditName = (prefix, f) => `${prefix}-${f}${f.includes(".") ? "" : ".txt"}`;
+const filesIn = (dir, re) => fs.readdirSync(dir).filter((f) => re.test(f) && fs.statSync(path.join(dir, f)).isFile());
+
+// Every licence file at the top of `dir`, as copyCredits [from, to] pairs
+// named `<prefix>-<file>`. A source without one must not ship, so this throws.
+// An upstream with no licence file but a licence statement elsewhere (a
+// README saying "public domain") names that file and the statement it must
+// contain: { statedIn: "README.md", statement: /public domain/i }. That file
+// is then returned as the licence, and the build still fails without it.
+export function licenseFiles(dir, prefix, { statedIn, statement } = {}) {
+  const found = filesIn(dir, /^(licen[cs]e|copying)/i);
+  if (!found.length && statedIn) {
+    const file = path.join(dir, statedIn);
+    if (fs.existsSync(file) && statement.test(fs.readFileSync(file, "utf8"))) found.push(statedIn);
+  }
+  if (!found.length) {
+    const also = statedIn ? ` and ${statedIn} does not state ${statement}` : "";
+    throw new Error(`${prefix}: no licence file (LICENSE*, LICENCE* or COPYING*) in ${dir}${also}`);
+  }
+  return found.map((f) => [path.join(dir, f), creditName(prefix, f)]);
+}
+
+// Every licence and readme file at the top of `dir` (see licenseFiles).
+export function upstreamCredits(dir, prefix, stated) {
+  const files = new Map(licenseFiles(dir, prefix, stated));
+  for (const f of filesIn(dir, /^readme/i)) files.set(path.join(dir, f), creditName(prefix, f));
+  return [...files];
+}
+
 export function copyCredits(pack, files, readme) {
   const dir = path.join(pack, "credits");
   fs.mkdirSync(dir, { recursive: true });

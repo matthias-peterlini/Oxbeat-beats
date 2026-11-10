@@ -12,7 +12,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
-  MB, VSCO_CREDIT, VSCO_REPO, buildVsco, copyCredits, fetchRepo, flacBinary, flacEncoder, folderSize, mono,
+  CREDIT_PATTERNS, MB, upstreamCredits, VSCO_CREDIT, VSCO_REPO, buildVsco, copyCredits, fetchRepo, flacBinary, flacEncoder, folderSize, mono,
   noteNumber, readWav, SUSTAIN, tail, trimLead, velRanges, writeSfz,
 } from "./lib.mjs";
 
@@ -247,18 +247,14 @@ export async function buildFamily(family, { pack, run, work }) {
   const encode = flacEncoder(flac, run, work);
   const dirs = new Set(spec.instruments.filter((i) => i.dir !== "Percussion").map((i) => `/${i.dir}/*.wav`));
   const loose = spec.kit || spec.instruments.some((i) => i.dir === "Percussion") ? ["/Percussion/*.wav"] : [];
-  const root = fetchRepo({ ...VSCO_REPO, patterns: ["/LICENSE", "/README.md", "/Readme.txt", ...dirs, ...loose] }, work, run);
+  const root = fetchRepo({ ...VSCO_REPO, patterns: [...CREDIT_PATTERNS, ...dirs, ...loose] }, work, run);
 
   for (const i of spec.instruments) {
     buildVsco(i, root, pack, work, encode, { packName: spec.pack, log: "vsco", generator: "vsco.mjs" });
   }
   if (spec.kit) buildKit(spec.kit, root, pack, encode);
 
-  copyCredits(pack, [
-    [path.join(root, "LICENSE"), "VSCO-2-CE-LICENSE.txt"],
-    [path.join(root, "README.md"), "VSCO-2-CE-README.md"],
-    [path.join(root, "Readme.txt"), "VSCO-2-CE-Readme.txt"],
-  ], `${spec.pack} is made from VS Chamber Orchestra Community Edition by Versilian Studios
+  copyCredits(pack, upstreamCredits(root, "VSCO-2-CE"), `${spec.pack} is made from VS Chamber Orchestra Community Edition by Versilian Studios
 (Sam Gossner, Simon Dalzell, Elan Hickler), CC0 1.0.
 https://github.com/sgossner/VSCO-2-CE (${VSCO_REPO.sha})
 

@@ -8,7 +8,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { MB, copyCredits, fetchRepo, flacBinary, flacEncoder, folderSize, readWav } from "./lib.mjs";
+import { CREDIT_PATTERNS, MB, copyCredits, upstreamCredits, fetchRepo, flacBinary, flacEncoder, folderSize, readWav } from "./lib.mjs";
 import { readSfz, silencedBy } from "./sfz.mjs";
 
 export const REPO = {
@@ -17,7 +17,7 @@ export const REPO = {
 };
 const KIT = "DrumGizmo/DRSKit";
 const PROGRAM = `${KIT}/Stereo/DrumGizmo DRSKit (N).sfz`;
-const BASE = [`/${KIT}/Data/`, `/${KIT}/Stereo/`, "/LICENSE", "/README.md"];
+const BASE = [`/${KIT}/Data/`, `/${KIT}/Stereo/`, ...CREDIT_PATTERNS];
 
 // Mic -> [gain, pan 0 (left) .. 1 (right)], after upstream's default stereo mix.
 const MIX = {
@@ -131,10 +131,7 @@ export default function prepare({ pack, work, run }) {
   fs.writeFileSync(path.join(pack, "DRS Kit.sfz"), `${lines.join("\n")}\n`);
   console.log(`drs: ${names.size} stereo samples at ${rate} Hz, ${(folderSize(pack) / MB).toFixed(1)} MB`);
 
-  copyCredits(pack, [
-    [path.join(dir, "LICENSE"), "DrumGizmo.DRSKit-LICENSE.txt"],
-    [path.join(dir, "README.md"), "DrumGizmo.DRSKit-README.md"],
-  ], `DRS Kit is made from DrumGizmo's DRSKit (CC BY 4.0):
+  copyCredits(pack, upstreamCredits(dir, "DrumGizmo.DRSKit"), `DRS Kit is made from DrumGizmo's DRSKit (CC BY 4.0):
 - ${REPO.url} (${REPO.sha})
 
 Samples: DRSKit by Lars Muldjord, Bent Bisballe Nyeng and Jes Eiler (DRSDrums),

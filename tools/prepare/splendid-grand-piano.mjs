@@ -8,7 +8,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { copyCredits } from "./lib.mjs";
+import { copyCredits, upstreamCredits } from "./lib.mjs";
 
 const LAYERS = [
   ["PP", 1, 67],
@@ -46,7 +46,8 @@ export default function prepare({ sources, pack }) {
     }
   }
   fs.writeFileSync(path.join(pack, "Splendid Grand Piano.sfz"), `${lines.join("\n")}\n`);
-  copyCredits(pack, [[path.join(src, "README.md"), "SplendidGrandPiano-README.md"]],
+  // Upstream has no LICENSE file at this sha: its README states the licence.
+  copyCredits(pack, upstreamCredits(src, "SplendidGrandPiano", { statedIn: "README.md", statement: /public domain/i }),
     "Splendid Grand Piano\n" +
     "Samples: Public Domain by AKAI (see SplendidGrandPiano-README.md).\n" +
     "SFZ mapping by kinwie, string resonance and half-pedalling by P. Eastman.\n" +
