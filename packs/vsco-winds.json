@@ -1,0 +1,34 @@
+{
+  "id": "vsco-winds",
+  "name": "VSCO 2 Winds",
+  "version": "1.0.0",
+  "category": "Winds",
+  "description": "Flute, piccolo, oboe, clarinet and bassoon from VS Chamber Orchestra 2: sustains, vibrato and staccato.",
+  "author": "Versilian Studios (Sam Gossner, Simon Dalzell, Elan Hickler)",
+  "license": "CC0 1.0",
+  "homepage": "https://github.com/sgossner/VSCO-2-CE",
+  "sources": [
+    {
+      "name": "license",
+      "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/LICENSE",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    }
+  ],
+  "prepare": "vsco-winds.mjs",
+  "sounds": [
+    { "name": "Flute Sustain", "file": "Flute Sustain.sfz", "category": "Winds" },
+    { "name": "Flute Vibrato", "file": "Flute Vibrato.sfz", "category": "Winds" },
+    { "name": "Flute Expressive", "file": "Flute Expressive.sfz", "category": "Winds" },
+    { "name": "Flute Staccato", "file": "Flute Staccato.sfz", "category": "Winds" },
+    { "name": "Piccolo Sustain", "file": "Piccolo Sustain.sfz", "category": "Winds" },
+    { "name": "Piccolo Staccato", "file": "Piccolo Staccato.sfz", "category": "Winds" },
+    { "name": "Oboe Sustain", "file": "Oboe Sustain.sfz", "category": "Winds" },
+    { "name": "Oboe Vibrato", "file": "Oboe Vibrato.sfz", "category": "Winds" },
+    { "name": "Oboe Staccato", "file": "Oboe Staccato.sfz", "category": "Winds" },
+    { "name": "Clarinet Sustain", "file": "Clarinet Sustain.sfz", "category": "Winds" },
+    { "name": "Clarinet Staccato", "file": "Clarinet Staccato.sfz", "category": "Winds" },
+    { "name": "Bassoon Sustain", "file": "Bassoon Sustain.sfz", "category": "Winds" },
+    { "name": "Bassoon Vibrato", "file": "Bassoon Vibrato.sfz", "category": "Winds" },
+    { "name": "Bassoon Staccato", "file": "Bassoon Staccato.sfz", "category": "Winds" }
+  ]
+}

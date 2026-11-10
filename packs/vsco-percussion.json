@@ -1,0 +1,27 @@
+{
+  "id": "vsco-percussion",
+  "name": "VSCO 2 Percussion",
+  "version": "1.0.0",
+  "category": "Percussion",
+  "description": "Timpani, glockenspiel, marimba, xylophone, tubular bells and a kit of orchestral percussion (bass drum, snares, cymbals, gong, triangles, tambourine, congas and more) from VS Chamber Orchestra 2.",
+  "author": "Versilian Studios (Sam Gossner, Simon Dalzell, Elan Hickler)",
+  "license": "CC0 1.0",
+  "homepage": "https://github.com/sgossner/VSCO-2-CE",
+  "sources": [
+    {
+      "name": "license",
+      "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/LICENSE",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    }
+  ],
+  "prepare": "vsco-percussion.mjs",
+  "sounds": [
+    { "name": "Glockenspiel", "file": "Glockenspiel.sfz", "category": "Percussion" },
+    { "name": "Marimba", "file": "Marimba.sfz", "category": "Percussion" },
+    { "name": "Xylophone", "file": "Xylophone.sfz", "category": "Percussion" },
+    { "name": "Tubular Bells", "file": "Tubular Bells.sfz", "category": "Percussion" },
+    { "name": "Timpani", "file": "Timpani.sfz", "category": "Percussion" },
+    { "name": "Timpani Rolls", "file": "Timpani Rolls.sfz", "category": "Percussion" },
+    { "name": "Orchestral Percussion", "file": "Orchestral Percussion.sfz", "kind": "drums", "category": "Percussion" }
+  ]
+}

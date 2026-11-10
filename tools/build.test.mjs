@@ -1,6 +1,7 @@
 // node --test "tools/*.test.mjs"
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -115,5 +116,31 @@ test("a prepare script that leaves out a sound fails the build", () => {
   const result = build(dir, ["--allow-file"]);
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /Missing\.sfz is not in the pack/);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("a source that is not a zip is kept as one file and checked against its sha256", () => {
+  const dir = fixture();
+  const font = path.join(dir, "Font.sf2");
+  fs.writeFileSync(font, "not really a soundfont");
+  const digest = createHash("sha256").update(fs.readFileSync(font)).digest("hex");
+  const recipe = JSON.parse(fs.readFileSync(path.join(dir, "packs", "combo.json"), "utf8"));
+  delete recipe.prepare;
+  recipe.sounds = [{ name: "Font", file: "Font.sf2", preset: "0:0" }];
+  const write = (sha256) => {
+    recipe.sources = [{ name: "font", url: pathToFileURL(font).href, sha256 }];
+    fs.writeFileSync(path.join(dir, "packs", "combo.json"), JSON.stringify(recipe));
+  };
+
+  write(digest);
+  const ok = build(dir, ["--allow-file"]);
+  assert.equal(ok.status, 0, ok.stderr + ok.stdout);
+  unzip(path.join(dir, "dist", "combo-1.2.3.zip"), path.join(dir, "unpacked"));
+  assert.equal(fs.readFileSync(path.join(dir, "unpacked", "combo", "Font.sf2"), "utf8"), "not really a soundfont");
+
+  write("0".repeat(64));
+  const bad = build(dir, ["--allow-file"]);
+  assert.notEqual(bad.status, 0);
+  assert.match(bad.stderr, /does not match its sha256/);
   fs.rmSync(dir, { recursive: true, force: true });
 });

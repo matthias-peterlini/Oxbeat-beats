@@ -1,0 +1,21 @@
+{
+  "id": "drumgizmo-drs",
+  "name": "DRS Kit",
+  "version": "1.0.0",
+  "category": "Drums",
+  "description": "A full acoustic rock and jazz kit from DrumGizmo and DRSDrums: kick, snare, three toms, hi-hat, ride and two crashes, with round robins and many velocity layers.",
+  "author": "Lars Muldjord, Bent Bisballe Nyeng and Jes Eiler (DRSDrums); SFZ mapping by kinwie",
+  "license": "CC BY 4.0",
+  "homepage": "https://github.com/sfzinstruments/DrumGizmo.DRSKit",
+  "sources": [
+    {
+      "name": "license",
+      "url": "https://raw.githubusercontent.com/sfzinstruments/DrumGizmo.DRSKit/b01448990a31f722542f1812e56159a97a6a2a82/LICENSE",
+      "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
+    }
+  ],
+  "prepare": "drumgizmo-drs.mjs",
+  "sounds": [
+    { "name": "DRS Kit", "file": "DRS Kit.sfz", "caption": "Acoustic kit, General MIDI drum map", "category": "Drums" }
+  ]
+}

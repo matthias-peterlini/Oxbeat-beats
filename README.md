@@ -5,8 +5,8 @@
 **Free instruments and drum kits for [Oxbeat](https://github.com/matthias-peterlini/Oxbeat), one click away.**
 
 [![Publish packs](https://github.com/matthias-peterlini/Oxbeat-beats/actions/workflows/publish.yml/badge.svg)](https://github.com/matthias-peterlini/Oxbeat-beats/actions/workflows/publish.yml)
-![Packs](https://img.shields.io/badge/packs-6-6c5ce7)
-![Sounds](https://img.shields.io/badge/sounds-121-00b894)
+![Packs](https://img.shields.io/badge/packs-15-6c5ce7)
+![Sounds](https://img.shields.io/badge/sounds-253-00b894)
 
 </div>
 
@@ -27,6 +27,15 @@ the **Store** tab.
 | **MTG Solo Saxophones** | Soprano, alto, tenor and baritone sax, sampled note by note | 100 MB | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | **Ixox Flute** | A soft, breathy concert flute | 9 MB | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | **Cowsynth** | Quirky sample-based organs, pads and plucks | 13 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **Splendid Grand Piano** | A full 88-key acoustic grand with four velocity layers | 71 MB | Public domain |
+| **VSCO 2 Strings** | Violin, viola and cello sections, solo violin, double bass and harp: sustain, tremolo, pizzicato and spiccato (22 sounds) | 45 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **VSCO 2 Winds** | Flute, piccolo, oboe, clarinet and bassoon: sustains, vibrato and staccato (14 sounds) | 22 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **VSCO 2 Brass** | Trumpet (open and muted), French horn, trombones and tuba (18 sounds) | 30 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **VSCO 2 Percussion** | Timpani, glockenspiel, marimba, xylophone, tubular bells and orchestral percussion (7 sounds) | 17 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **MuseScore General** | The General MIDI bank that ships with MuseScore: 49 hand-picked instruments, 8 drum kits, and every other sound in the bank | 159 MB | [MIT](https://ftp.osuosl.org/pub/musescore/soundfont/MuseScore_General/MuseScore_General_License.md) |
+| **Karoryfer Guitars** | Five sampled electric and archtop guitars | 146 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **Karoryfer Basses** | Electric and upright basses, plucked and bowed (7 sounds) | 143 MB | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **DRS Kit** | A full acoustic kit from DrumGizmo: kick, snare, three toms, hi-hat, ride and two crashes, with round robins | 35 MB | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 
 Sizes are the download size; packs are installed in Oxbeat's data folder
 and can be removed again from the Store tab.
@@ -45,6 +54,11 @@ These packs exist thanks to the people who recorded and shared them:
 - **MTG Solo Saxophones** by the Music Technology Group at Universitat Pompeu Fabra, SFZ mapping by [sfzinstruments](https://github.com/sfzinstruments/MTG.SoloSax)
 - **Ixox Flute** by Xavier Hosxe, SFZ mapping by [sfzinstruments](https://github.com/sfzinstruments/Ixox.Flute)
 - **Cowsynth** by [Karoryfer Samples](https://github.com/sfzinstruments/karoryfer.cowsynth)
+- **Splendid Grand Piano**: samples by AKAI, released into the public domain; SFZ by kinwie and P. Eastman via [sfzinstruments](https://github.com/sfzinstruments/SplendidGrandPiano)
+- **VSCO 2 Strings, Winds, Brass and Percussion** from [VS Chamber Orchestra Community Edition](https://github.com/sgossner/VSCO-2-CE) by Versilian Studios
+- **MuseScore General**: FluidR3 by Frank Wen, FluidR3Mono by Michael Cowgill, adapted for MuseScore by S. Christian Collins, with Temple Blocks by Ethan Winer and Drumline Cymbals by Michael Schorsch ([download](https://ftp.osuosl.org/pub/musescore/soundfont/MuseScore_General/))
+- **Karoryfer Guitars and Basses** by Karoryfer Lecolds (D. Smolken, Brian Wood), via [sfzinstruments](https://github.com/sfzinstruments)
+- **DRS Kit**: DRSKit by Lars Muldjord, Bent Bisballe Nyeng and Jes Eiler (DRSDrums) for [DrumGizmo](https://drumgizmo.org), SFZ mapping by kinwie via [sfzinstruments](https://github.com/sfzinstruments/DrumGizmo.DRSKit); each hit's microphones are mixed down to stereo
 
 When you publish music made with a CC BY or CC BY-SA pack you are free to
 use it commercially; crediting the pack is appreciated, and the licence asks
@@ -87,8 +101,8 @@ downloads the zip over HTTPS, checks its SHA-256, and unpacks it.
 ```
 
 A sound's optional `category` groups it in Oxbeat's Library: one of
-Keyboards, Strings, Winds, Brass, Guitars, Bass, Drums, Percussion, Synths or
-Vocals. Without it, the sound goes under the pack's `category`.
+Keyboards, Strings, Guitars, Bass, Winds, Brass, Percussion, Drums, Synths or
+World. Without it, the sound goes under the pack's `category`.
 
 A pack built from several libraries lists them under `sources` instead of
 `source`, and names a script in `tools/prepare/` that assembles the pack:

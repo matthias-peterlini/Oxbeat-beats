@@ -5,7 +5,8 @@
 //                        [--packs <dir>] [--prepare <dir>] [--allow-file]
 //
 // For every recipe it downloads the pinned upstream archives ("source", or
-// several named "sources"), keeps the files the pack needs or hands them to
+// several named "sources"; a URL that does not end in .zip is kept as a
+// single file, checked against its "sha256" when one is given), keeps the files the pack needs or hands them to
 // the recipe's prepare script in tools/prepare, writes pack.json, zips it and
 // records size and sha256 in dist/index.json. Packs whose version matches the
 // published index are not rebuilt: their index entry is carried over, so only
@@ -67,6 +68,7 @@ function readRecipe(file) {
     if (!url.startsWith("https://") && !(allowFile && url.startsWith("file://"))) {
       fail(`${recipe.id}: source ${source.name} must be https`);
     }
+    if (source.sha256 && !/^[0-9a-f]{64}$/.test(source.sha256)) fail(`${recipe.id}: source ${source.name} has a bad sha256`);
   }
   if (new Set(recipe.sources.map((s) => s.name)).size !== recipe.sources.length) fail(`${recipe.id}: duplicate source names`);
   if (recipe.prepare && !/^[a-z0-9_-]+\.mjs$/.test(recipe.prepare)) fail(`${recipe.id}: prepare names a script in tools/prepare`);
@@ -148,11 +150,20 @@ async function build(recipe) {
   const sources = {};
   for (const source of recipe.sources) {
     console.log(`${recipe.id}: downloading ${source.url}`);
-    const archive = path.join(dir, `${source.name}.zip`);
-    await download(source.url, archive);
     const into = path.join(dir, "sources", source.name);
-    extract(archive, into);
-    fs.rmSync(archive);
+    const isZip = new URL(source.url).pathname.toLowerCase().endsWith(".zip");
+    const file = isZip
+      ? path.join(dir, `${source.name}.zip`)
+      : path.join(into, decodeURIComponent(path.posix.basename(new URL(source.url).pathname)));
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    await download(source.url, file);
+    if (source.sha256 && sha256(file) !== source.sha256) fail(`${recipe.id}: ${source.url} does not match its sha256`);
+    if (!isZip) {
+      sources[source.name] = into;
+      continue;
+    }
+    extract(file, into);
+    fs.rmSync(file);
     sources[source.name] = unwrap(into);
   }
 

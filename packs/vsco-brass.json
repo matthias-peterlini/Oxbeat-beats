@@ -1,0 +1,38 @@
+{
+  "id": "vsco-brass",
+  "name": "VSCO 2 Brass",
+  "version": "1.0.0",
+  "category": "Brass",
+  "description": "Trumpet (open and muted), French horn, tenor trombone, tuba and a vintage trombone from VS Chamber Orchestra 2: sustains, vibrato, staccato, buzz and falls.",
+  "author": "Versilian Studios (Sam Gossner, Simon Dalzell, Elan Hickler)",
+  "license": "CC0 1.0",
+  "homepage": "https://github.com/sgossner/VSCO-2-CE",
+  "sources": [
+    {
+      "name": "license",
+      "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/LICENSE",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    }
+  ],
+  "prepare": "vsco-brass.mjs",
+  "sounds": [
+    { "name": "Trumpet Sustain", "file": "Trumpet Sustain.sfz", "category": "Brass" },
+    { "name": "Trumpet Vibrato", "file": "Trumpet Vibrato.sfz", "category": "Brass" },
+    { "name": "Trumpet Staccato", "file": "Trumpet Staccato.sfz", "category": "Brass" },
+    { "name": "Trumpet Straight Mute", "file": "Trumpet Straight Mute.sfz", "category": "Brass" },
+    { "name": "Trumpet Harmon Mute", "file": "Trumpet Harmon Mute.sfz", "category": "Brass" },
+    { "name": "French Horn Sustain", "file": "French Horn Sustain.sfz", "category": "Brass" },
+    { "name": "French Horn Muted", "file": "French Horn Muted.sfz", "category": "Brass" },
+    { "name": "French Horn Staccato", "file": "French Horn Staccato.sfz", "category": "Brass" },
+    { "name": "Trombone Sustain", "file": "Trombone Sustain.sfz", "category": "Brass" },
+    { "name": "Trombone Vibrato", "file": "Trombone Vibrato.sfz", "category": "Brass" },
+    { "name": "Trombone Staccato", "file": "Trombone Staccato.sfz", "category": "Brass" },
+    { "name": "Tuba Sustain", "file": "Tuba Sustain.sfz", "category": "Brass" },
+    { "name": "Tuba Staccato", "file": "Tuba Staccato.sfz", "category": "Brass" },
+    { "name": "Old Trombone Sustain", "file": "Old Trombone Sustain.sfz", "category": "Brass" },
+    { "name": "Old Trombone Vibrato", "file": "Old Trombone Vibrato.sfz", "category": "Brass" },
+    { "name": "Old Trombone Buzz", "file": "Old Trombone Buzz.sfz", "category": "Brass" },
+    { "name": "Old Trombone Short", "file": "Old Trombone Short.sfz", "category": "Brass" },
+    { "name": "Old Trombone Fall", "file": "Old Trombone Fall.sfz", "category": "Brass" }
+  ]
+}
