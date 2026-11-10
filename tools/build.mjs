@@ -2,11 +2,17 @@
 // Builds Oxbeat sound packs from the recipes in packs/*.json.
 //
 //   node tools/build.mjs [--only <id>] [--force] [--out dist] [--no-previous]
+//                        [--packs <dir>] [--prepare <dir>] [--allow-file]
 //
-// For every recipe it downloads the pinned upstream archive, keeps the files
-// the pack needs, writes pack.json, zips it and records size and sha256 in
-// dist/index.json. Packs whose version matches the published index are not
-// rebuilt: their index entry is carried over, so only new zips get uploaded.
+// For every recipe it downloads the pinned upstream archives ("source", or
+// several named "sources"), keeps the files the pack needs or hands them to
+// the recipe's prepare script in tools/prepare, writes pack.json, zips it and
+// records size and sha256 in dist/index.json. Packs whose version matches the
+// published index are not rebuilt: their index entry is carried over, so only
+// new zips get uploaded.
+//
+// --packs and --prepare read recipes and scripts from other folders, and
+// --allow-file accepts file:// sources; tools/build.test.mjs uses them.
 //
 // Needs Node 18+, plus `unzip` and `zip` (Linux/macOS) or the built-in `tar`
 // (Windows).
@@ -15,7 +21,7 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const REPO = "matthias-peterlini/Oxbeat-beats";
 const BASE_URL = `https://github.com/${REPO}/releases/download/packs/`;
@@ -35,6 +41,11 @@ const only = option("--only", null);
 const force = flag("--force");
 const out = path.resolve(ROOT, option("--out", "dist"));
 const work = path.join(out, ".work");
+const packsDir = path.resolve(ROOT, option("--packs", "packs"));
+const prepareDir = path.resolve(ROOT, option("--prepare", path.join("tools", "prepare")));
+const allowFile = flag("--allow-file");
+// The app downloads packs over the network on first launch; keep them small.
+const MAX_ZIP = 250 * 1048576;
 
 function fail(message) {
   console.error(`error: ${message}`);
@@ -43,12 +54,24 @@ function fail(message) {
 
 function readRecipe(file) {
   const recipe = JSON.parse(fs.readFileSync(file, "utf8"));
-  for (const key of ["id", "name", "version", "category", "description", "author", "license", "source", "sounds"]) {
+  for (const key of ["id", "name", "version", "category", "description", "author", "license", "sounds"]) {
     if (!recipe[key]) fail(`${path.basename(file)}: missing "${key}"`);
   }
   if (!SAFE_ID.test(recipe.id)) fail(`${recipe.id}: ids are lowercase letters, digits, - and _`);
   if (`${recipe.id}.json` !== path.basename(file)) fail(`${file}: file name must be ${recipe.id}.json`);
-  if (!recipe.source.startsWith("https://")) fail(`${recipe.id}: source must be https`);
+  if (!recipe.source === !recipe.sources) fail(`${recipe.id}: give either "source" or "sources"`);
+  recipe.sources ??= [{ name: "source", url: recipe.source }];
+  for (const source of recipe.sources) {
+    if (!SAFE_ID.test(source.name ?? "")) fail(`${recipe.id}: source names are lowercase letters, digits, - and _`);
+    const url = source.url ?? "";
+    if (!url.startsWith("https://") && !(allowFile && url.startsWith("file://"))) {
+      fail(`${recipe.id}: source ${source.name} must be https`);
+    }
+  }
+  if (new Set(recipe.sources.map((s) => s.name)).size !== recipe.sources.length) fail(`${recipe.id}: duplicate source names`);
+  if (recipe.prepare && !/^[a-z0-9_-]+\.mjs$/.test(recipe.prepare)) fail(`${recipe.id}: prepare names a script in tools/prepare`);
+  if (recipe.prepare && recipe.include) fail(`${recipe.id}: use either include or prepare`);
+  if (!recipe.prepare && recipe.sources.length > 1) fail(`${recipe.id}: several sources need a prepare script`);
   for (const sound of recipe.sounds) {
     if (!sound.name || !sound.file) fail(`${recipe.id}: every sound needs a name and a file`);
     if (sound.file.split("/").includes("..")) fail(`${recipe.id}: ${sound.file} leaves the pack`);
@@ -71,6 +94,7 @@ async function previousIndex() {
 }
 
 async function download(url, dest) {
+  if (url.startsWith("file://")) return fs.copyFileSync(fileURLToPath(url), dest);
   const response = await fetch(url);
   if (!response.ok) fail(`download failed (${response.status}): ${url}`);
   fs.writeFileSync(dest, Buffer.from(await response.arrayBuffer()));
@@ -121,15 +145,30 @@ async function build(recipe) {
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
 
-  console.log(`${recipe.id}: downloading ${recipe.source}`);
-  const archive = path.join(dir, "source.zip");
-  await download(recipe.source, archive);
-  extract(archive, path.join(dir, "source"));
+  const sources = {};
+  for (const source of recipe.sources) {
+    console.log(`${recipe.id}: downloading ${source.url}`);
+    const archive = path.join(dir, `${source.name}.zip`);
+    await download(source.url, archive);
+    const into = path.join(dir, "sources", source.name);
+    extract(archive, into);
+    fs.rmSync(archive);
+    sources[source.name] = unwrap(into);
+  }
 
   const stage = path.join(dir, "stage");
   const pack = path.join(stage, recipe.id);
   fs.mkdirSync(pack, { recursive: true });
-  copyPack(unwrap(path.join(dir, "source")), pack, recipe.include);
+  if (recipe.prepare) {
+    const script = await import(pathToFileURL(path.join(prepareDir, recipe.prepare)).href);
+    const run = (cmd, cmdArgs, options = {}) =>
+      execFileSync(cmd, cmdArgs, { stdio: ["ignore", "inherit", "inherit"], ...options });
+    const scratch = path.join(dir, "prepare");
+    fs.mkdirSync(scratch, { recursive: true });
+    await script.default({ sources, pack, run, work: scratch });
+  } else {
+    copyPack(sources[recipe.sources[0].name], pack, recipe.include);
+  }
 
   for (const sound of recipe.sounds) {
     if (!fs.existsSync(path.join(pack, sound.file))) fail(`${recipe.id}: ${sound.file} is not in the pack`);
@@ -139,6 +178,7 @@ async function build(recipe) {
     id: recipe.id,
     name: recipe.name,
     version: recipe.version,
+    category: recipe.category,
     author: recipe.author,
     license: recipe.license,
     description: recipe.description,
@@ -154,6 +194,7 @@ async function build(recipe) {
 
   const size = fs.statSync(zip).size;
   console.log(`${recipe.id}: ${file} (${(size / 1048576).toFixed(1)} MB)`);
+  if (size > MAX_ZIP) fail(`${recipe.id}: ${file} is over ${MAX_ZIP / 1048576} MB`);
   return {
     id: recipe.id,
     name: recipe.name,
@@ -169,10 +210,10 @@ async function build(recipe) {
 }
 
 const recipes = fs
-  .readdirSync(path.join(ROOT, "packs"))
+  .readdirSync(packsDir)
   .filter((name) => name.endsWith(".json"))
   .sort()
-  .map((name) => readRecipe(path.join(ROOT, "packs", name)));
+  .map((name) => readRecipe(path.join(packsDir, name)));
 
 if (only && !recipes.some((recipe) => recipe.id === only)) fail(`no recipe called ${only}`);
 fs.mkdirSync(out, { recursive: true });

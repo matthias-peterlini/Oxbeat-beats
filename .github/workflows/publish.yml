@@ -28,6 +28,13 @@ jobs:
         with:
           node-version: 22
 
+      # tools/prepare/essentials.mjs re-encodes samples with flac.
+      - name: Install flac
+        run: sudo apt-get update && sudo apt-get install -y flac
+
+      - name: Test the build tool
+        run: node --test "tools/*.test.mjs"
+
       - name: Build changed packs
         run: node tools/build.mjs ${{ inputs.force && '--force' || '' }}
 
