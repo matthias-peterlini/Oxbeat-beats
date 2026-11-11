@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { licenseFiles, upstreamCredits } from "./prepare/lib.mjs";
+import { licenseFiles, retry, upstreamCredits } from "./prepare/lib.mjs";
 import { creditFiles, resolveSamples } from "./prepare/sfzpack.mjs";
 
 function folder(files) {
@@ -50,4 +50,24 @@ test("samples resolve to the repository's own casing", () => {
 test("a sample missing from the repository is an error", () => {
   const dir = path.join(os.tmpdir(), "repo");
   assert.throws(() => resolveSamples([{ sample: path.join(dir, "gone.wav") }], dir, ["a.wav"], "repo"), /not in the repository/);
+});
+
+test("a download that drops twice succeeds on the third attempt", async () => {
+  let calls = 0;
+  const result = await retry(async () => {
+    calls += 1;
+    if (calls < 3) throw new Error("other side closed");
+    return "ok";
+  }, { delayMs: 0, log: () => {} });
+  assert.equal(result, "ok");
+  assert.equal(calls, 3);
+});
+
+test("a download that keeps failing gives up after three attempts", async () => {
+  let calls = 0;
+  await assert.rejects(retry(async () => {
+    calls += 1;
+    throw new Error("other side closed");
+  }, { delayMs: 0, log: () => {} }), /other side closed/);
+  assert.equal(calls, 3);
 });

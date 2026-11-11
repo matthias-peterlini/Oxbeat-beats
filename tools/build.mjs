@@ -23,6 +23,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { retry } from "./prepare/lib.mjs";
 
 const REPO = "matthias-peterlini/Oxbeat-beats";
 const BASE_URL = `https://github.com/${REPO}/releases/download/packs/`;
@@ -97,9 +98,16 @@ async function previousIndex() {
 
 async function download(url, dest) {
   if (url.startsWith("file://")) return fs.copyFileSync(fileURLToPath(url), dest);
-  const response = await fetch(url);
-  if (!response.ok) fail(`download failed (${response.status}): ${url}`);
-  fs.writeFileSync(dest, Buffer.from(await response.arrayBuffer()));
+  try {
+    const body = await retry(async () => {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return Buffer.from(await response.arrayBuffer());
+    });
+    fs.writeFileSync(dest, body);
+  } catch (error) {
+    fail(`download failed (${error.cause?.message ?? error.message}): ${url}`);
+  }
 }
 
 function extract(zip, dest) {

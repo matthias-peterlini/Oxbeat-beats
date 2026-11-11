@@ -403,3 +403,17 @@ export function copyCredits(pack, files, readme) {
   for (const [from, to] of files) fs.copyFileSync(from, path.join(dir, to));
   if (readme) fs.writeFileSync(path.join(dir, "README.txt"), readme);
 }
+
+// Runs fn up to `attempts` times, waiting longer after each failure, so one
+// dropped connection does not fail a whole publish.
+export async function retry(fn, { attempts = 3, delayMs = 5000, log = console.warn } = {}) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt >= attempts) throw error;
+      log(`attempt ${attempt} failed (${error.cause?.message ?? error.message}), retrying`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
+    }
+  }
+}
