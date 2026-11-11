@@ -1,0 +1,42 @@
+{
+  "id": "vsco-strings",
+  "name": "VSCO 2 Strings",
+  "version": "1.0.0",
+  "category": "Strings",
+  "description": "Violin, viola and cello sections, solo violin, double bass and harp from VS Chamber Orchestra 2: sustain, tremolo, pizzicato and spiccato.",
+  "author": "Versilian Studios (Sam Gossner, Simon Dalzell, Elan Hickler)",
+  "license": "CC0 1.0",
+  "homepage": "https://github.com/sgossner/VSCO-2-CE",
+  "sources": [
+    {
+      "name": "license",
+      "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/LICENSE",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    }
+  ],
+  "prepare": "vsco-strings.mjs",
+  "sounds": [
+    { "name": "Violins Sustain", "file": "Violins Sustain.sfz", "category": "Strings" },
+    { "name": "Violins Tremolo", "file": "Violins Tremolo.sfz", "category": "Strings" },
+    { "name": "Violins Pizzicato", "file": "Violins Pizzicato.sfz", "category": "Strings" },
+    { "name": "Violins Spiccato", "file": "Violins Spiccato.sfz", "category": "Strings" },
+    { "name": "Violas Sustain", "file": "Violas Sustain.sfz", "category": "Strings" },
+    { "name": "Violas Tremolo", "file": "Violas Tremolo.sfz", "category": "Strings" },
+    { "name": "Violas Pizzicato", "file": "Violas Pizzicato.sfz", "category": "Strings" },
+    { "name": "Violas Spiccato", "file": "Violas Spiccato.sfz", "category": "Strings" },
+    { "name": "Cellos Sustain", "file": "Cellos Sustain.sfz", "category": "Strings" },
+    { "name": "Cellos Tremolo", "file": "Cellos Tremolo.sfz", "category": "Strings" },
+    { "name": "Cellos Pizzicato", "file": "Cellos Pizzicato.sfz", "category": "Strings" },
+    { "name": "Cellos Spiccato", "file": "Cellos Spiccato.sfz", "category": "Strings" },
+    { "name": "Double Bass Sustain", "file": "Double Bass Sustain.sfz", "category": "Strings" },
+    { "name": "Double Bass Vibrato", "file": "Double Bass Vibrato.sfz", "category": "Strings" },
+    { "name": "Double Bass Tremolo", "file": "Double Bass Tremolo.sfz", "category": "Strings" },
+    { "name": "Double Bass Pizzicato", "file": "Double Bass Pizzicato.sfz", "category": "Strings" },
+    { "name": "Double Bass Spiccato", "file": "Double Bass Spiccato.sfz", "category": "Strings" },
+    { "name": "Solo Violin Sustain", "file": "Solo Violin Sustain.sfz", "category": "Strings" },
+    { "name": "Solo Violin Tremolo", "file": "Solo Violin Tremolo.sfz", "category": "Strings" },
+    { "name": "Solo Violin Pizzicato", "file": "Solo Violin Pizzicato.sfz", "category": "Strings" },
+    { "name": "Solo Violin Spiccato", "file": "Solo Violin Spiccato.sfz", "category": "Strings" },
+    { "name": "Harp", "file": "Harp.sfz", "category": "Strings" }
+  ]
+}

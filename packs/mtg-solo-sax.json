@@ -1,8 +1,8 @@
 {
   "id": "mtg-solo-sax",
   "name": "MTG Solo Saxophones",
-  "version": "1.0.0",
-  "category": "Woodwinds",
+  "version": "1.0.1",
+  "category": "Winds",
   "description": "Soprano, alto, tenor and baritone saxophones played note by note.",
   "author": "Music Technology Group, Universitat Pompeu Fabra (SFZ by sfzinstruments)",
   "license": "CC BY 4.0",
